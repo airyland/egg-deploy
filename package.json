@@ -1,0 +1,19 @@
+{
+  "name": "egg-deploy",
+  "version": "0.0.1",
+  "description": "hot-reload egg.js application",
+  "main": "lib.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "egg-deploy": "cli.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "nginx-upstream": "^0.1.4",
+    "shelljs": "^0.8.1"
+  }
+}
