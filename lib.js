@@ -136,7 +136,7 @@ names.forEach(name => {
     // stop backend
     info(`[deploy info] wait ${config.waitStopTime}ms before stop backend;`)
     await sleep(config.waitStopTime)
-    shell.exec(`npx egg-scripts stop --title=${instance.title}`)
+    shell.exec(`npx egg-scripts stop --ignore-stderr --title=${instance.title}`)
 
     // start backend
     info(`[deploy info] start backend:${instance.title};`)
