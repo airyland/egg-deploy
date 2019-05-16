@@ -140,7 +140,7 @@ names.forEach(name => {
 
     // start backend
     info(`[deploy info] start backend:${instance.title};`)
-    const start = shell.exec(`npx egg-scripts start --daemon --title=${instance.title} --port=${instance.port}`)
+    const start = shell.exec(`npx egg-scripts start --ignore-stderr --daemon --title=${instance.title} --port=${instance.port}`)
     if (start.code !== 0) {
       error(`[deploy error] start instance:${instance.title} fail, please check errors and fix it, exit;`)
       shell.exit(1)
