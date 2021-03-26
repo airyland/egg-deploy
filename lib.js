@@ -153,10 +153,10 @@ names.forEach(name => {
   }
 
   if (config.runningInstances && config.runningInstances.length) {
-    config.instances.forEach(instance => {
+    config.instances.forEach(async instance => {
       await libs.removeBackend(`localhost:${instance.port}`)
     })
-    config.runningInstances.forEach(instance => {
+    config.runningInstances.forEach(async instance => {
       await libs.addBackend(`localhost:${instance.port}`)
     })
     shell.exec(config.reloadCommand)
