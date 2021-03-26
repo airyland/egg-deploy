@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "chalk": "^2.4.1",
     "nginx-upstream": "^0.1.4",
     "shelljs": "^0.8.1"

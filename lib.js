@@ -9,6 +9,7 @@ const NginxManager = require('nginx-upstream')
 const chalk = require('chalk')
 const http = require('http')
 const cwd = process.cwd()
+const { sleep, checkUp } = require('./helper')
 
 const config = {
   instances: [{
@@ -18,16 +19,11 @@ const config = {
     port: 8002,
     title: 8002
   }],
+  runningInstances: [],
   startCommand: 'service nginx start',
   reloadCommand: 'nginx -s reload',
   nginxConfig: 'nginx.conf',
   waitStopTime: 5000
-}
-
-const sleep = function (time) {
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, time)
-  })
 }
 
 const info = function (str) {
@@ -146,11 +142,23 @@ names.forEach(name => {
       shell.exit(1)
     }
 
+    await checkUp(`http://localhost:${instance.port}`)
+
     // append backend to nginx and reload
     await libs.addBackend(`localhost:${instance.port}`)
     shell.exec(config.reloadCommand)
 
     // done for current backend
     info(`[deploy info] instance:${instance.title} reload done;`)
+  }
+
+  if (config.runningInstances && config.runningInstances.length) {
+    config.instances.forEach(instance => {
+      await libs.removeBackend(`localhost:${instance.port}`)
+    })
+    config.runningInstances.forEach(instance => {
+      await libs.addBackend(`localhost:${instance.port}`)
+    })
+    shell.exec(config.reloadCommand)
   }
 })()
