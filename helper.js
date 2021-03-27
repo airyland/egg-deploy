@@ -8,7 +8,7 @@ const sleep = function (time) {
   })
 }
 
-async function checkup(url) {
+async function checkUp(url) {
   return new Promise(async (resolve, reject) => {
     let up = false
     const startTime = new Date().getTime()
@@ -23,8 +23,13 @@ async function checkup(url) {
         console.log('已经在线')
         up = true
       } catch (e) {
-        console.log(e.message)
-        await sleep(CHECK_TIME)
+        // 404 is also valid
+        if (e.message.includes('404')) {
+          up = true
+        } else {
+          console.log(e.message)
+          await sleep(CHECK_TIME)
+        }
       }
     }
     console.log('duration:', new Date().getTime() - startTime)
@@ -34,5 +39,5 @@ async function checkup(url) {
 
 module.exports = {
   sleep,
-  checkup
+  checkUp
 }

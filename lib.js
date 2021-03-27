@@ -136,7 +136,12 @@ names.forEach(name => {
 
     // start backend
     info(`[deploy info] start backend:${instance.title};`)
-    const start = shell.exec(`npx egg-scripts start --ignore-stderr --daemon --title=${instance.title} --port=${instance.port}`)
+    let eggScripts = `npx egg-scripts start --ignore-stderr --daemon --title=${instance.title} --port=${instance.port}`
+    if (config.workers) {
+      eggScripts = `npx egg-scripts start --ignore-stderr --workers=${config.workers} --daemon --title=${instance.title} --port=${instance.port}`
+    }
+    console.log('command: ', eggScripts)
+    const start = shell.exec(eggScripts)
     if (start.code !== 0) {
       error(`[deploy error] start instance:${instance.title} fail, please check errors and fix it, exit;`)
       shell.exit(1)
@@ -153,12 +158,23 @@ names.forEach(name => {
   }
 
   if (config.runningInstances && config.runningInstances.length) {
-    config.instances.forEach(async instance => {
-      await libs.removeBackend(`localhost:${instance.port}`)
-    })
-    config.runningInstances.forEach(async instance => {
-      await libs.addBackend(`localhost:${instance.port}`)
-    })
-    shell.exec(config.reloadCommand)
+    for (const instance of config.instances) {
+      try {
+        console.log('remove backend:', `${instance.port}`)
+        await libs.removeBackend(`localhost:${instance.port}`)
+      } catch (e) {
+        console.log('remove all backends', e)
+      }
+    }
+
+    for (const instance of config.runningInstances) {
+      try {
+        console.log('add backend:', `${instance.port}`)
+        await libs.addBackend(`localhost:${instance.port}`)
+      } catch (e) {
+        console.log('add backend', e)
+      }
+    }
+    // shell.exec(config.reloadCommand)
   }
 })()
